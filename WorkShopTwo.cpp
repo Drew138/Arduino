@@ -48,7 +48,7 @@ void setup()
 void setDigitos(int i)
 {
     decenas = i / 10;
-    i > 10 ? unidades = i % 10 : unidades = i;
+    i >= 10 ? unidades = i % 10 : unidades = i;
 }
 
 void loop()
