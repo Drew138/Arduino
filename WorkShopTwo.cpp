@@ -13,6 +13,8 @@ int RGBGreen = 11;
 int RGBBlue = 12;
 int RGBRed = 13;
 int motor = 1;
+int PushButton = 0;
+int contador = 0;
 
 void setup()
 {
@@ -29,6 +31,7 @@ void setup()
     pinMode(RGBBlue, OUTPUT);
     pinMode(RGBRed, OUTPUT);
     pinMode(motor, OUTPUT);
+    pinMode(PushButton, INPUT);
 
     digitalWrite(Digito1, LOW);
     digitalWrite(Digito2, LOW);
@@ -45,10 +48,10 @@ void setup()
     digitalWrite(motor, LOW);
 }
 
-void setDigitos(int i)
+void setDigitos(int contador)
 {
-    decenas = i / 10;
-    i >= 10 ? unidades = i % 10 : unidades = i;
+    decenas = contador / 10;
+    contador >= 10 ? unidades = contador % 10 : unidades = contador;
 }
 
 void loop()
@@ -57,91 +60,76 @@ void loop()
     digitalWrite(RGBBlue, LOW);
     digitalWrite(RGBRed, LOW);
     digitalWrite(motor, LOW);
-    for (int i = 0; i < 100; i++)
-    {
-        // MOTOR
-        if (i <= 20)
-        {
-            digitalWrite(motor, LOW);
-        }
-        else if (i > 43)
-        {
-            digitalWrite(motor, LOW);
-            digitalWrite(motor, HIGH);
-        }
-        // LED RGB
-        if (i < 10)
-        {
-            analogWrite(RGBGreen, 0);
-            analogWrite(RGBBlue, 0);
-            analogWrite(RGBRed, 0);
-            delay(1);
-            analogWrite(RGBGreen, 255);
-            analogWrite(RGBBlue, 255);
-            analogWrite(RGBRed, 255);
-        }
-        else if ((i >= 10) && (i <= 28))
-        {
-            analogWrite(RGBGreen, 0);
-            analogWrite(RGBBlue, 0);
-            analogWrite(RGBRed, 0);
-            delay(1);
-            analogWrite(RGBGreen, 201);
-            analogWrite(RGBBlue, 14);
-            analogWrite(RGBRed, 255);
-        }
-        else if ((i > 28) && (i <= 30))
-        {
-            analogWrite(RGBGreen, 0);
-            analogWrite(RGBBlue, 0);
-            analogWrite(RGBRed, 0);
-            delay(1);
-            analogWrite(RGBGreen, 0);
-            analogWrite(RGBBlue, 0);
-            analogWrite(RGBRed, 0);
-        }
-        else if ((i > 30) && (i <= 60))
-        {
-            analogWrite(RGBGreen, 0);
-            analogWrite(RGBBlue, 0);
-            analogWrite(RGBRed, 0);
-            delay(1);
-            analogWrite(RGBGreen, 128);
-            analogWrite(RGBBlue, 0);
-            analogWrite(RGBRed, 255);
-        }
-        else if (i > 85)
-        {
-            analogWrite(RGBGreen, 0);
-            analogWrite(RGBBlue, 0);
-            analogWrite(RGBRed, 0);
-            delay(1);
-            analogWrite(RGBGreen, 0);
-            analogWrite(RGBBlue, 0);
-            analogWrite(RGBRed, 255);
-        }
-        // Multiplexacion
-        int repetitions = 5;
-        while (repetitions--)
-        {
 
-            setDigitos(i);
-            digitalWrite(Digito1, LOW);
-            digitalWrite(Digito2, LOW);
-            mostrarDigito(decenas);
-            delay(10);
-            digitalWrite(Digito1, HIGH);
-            digitalWrite(Digito2, LOW);
-            delay(50);
-            digitalWrite(Digito1, LOW);
-            digitalWrite(Digito2, LOW);
-            mostrarDigito(unidades);
-            delay(10);
-            digitalWrite(Digito1, LOW);
-            digitalWrite(Digito2, HIGH);
-            delay(50);
-        }
+    if (digitalRead(PushButton) == LOW)
+    {
+        contador += 1;
+        delay(150);
+        if (contador > 99)
+            contador = 0;
     }
+
+    // MOTOR
+    if (contador <= 20)
+    {
+        digitalWrite(motor, LOW);
+    }
+    else if (contador > 43)
+    {
+        digitalWrite(motor, LOW);
+        digitalWrite(motor, HIGH);
+    }
+    // LED RGB
+    analogWrite(RGBGreen, 0);
+    analogWrite(RGBBlue, 0);
+    analogWrite(RGBRed, 0);
+    if (contador < 10)
+    {
+        analogWrite(RGBGreen, 255);
+        analogWrite(RGBBlue, 255);
+        analogWrite(RGBRed, 255);
+    }
+    else if ((contador >= 10) && (contador <= 28))
+    {
+        analogWrite(RGBGreen, 201);
+        analogWrite(RGBBlue, 14);
+        analogWrite(RGBRed, 255);
+    }
+    else if ((contador > 28) && (contador <= 30))
+    {
+        analogWrite(RGBGreen, 0);
+        analogWrite(RGBBlue, 0);
+        analogWrite(RGBRed, 0);
+    }
+    else if ((contador > 30) && (contador <= 60))
+    {
+        analogWrite(RGBGreen, 128);
+        analogWrite(RGBBlue, 0);
+        analogWrite(RGBRed, 255);
+    }
+    else if (contador > 85)
+    {
+        analogWrite(RGBGreen, 0);
+        analogWrite(RGBBlue, 0);
+        analogWrite(RGBRed, 255);
+    }
+    // Multiplexacion
+
+    setDigitos(contador);
+    digitalWrite(Digito1, LOW);
+    digitalWrite(Digito2, LOW);
+    mostrarDigito(decenas);
+    delay(1);
+    digitalWrite(Digito1, HIGH);
+    digitalWrite(Digito2, LOW);
+    delay(20);
+    digitalWrite(Digito1, LOW);
+    digitalWrite(Digito2, LOW);
+    mostrarDigito(unidades);
+    delay(1);
+    digitalWrite(Digito1, LOW);
+    digitalWrite(Digito2, HIGH);
+    delay(20);
 }
 
 void mostrarDigito(int Value)
